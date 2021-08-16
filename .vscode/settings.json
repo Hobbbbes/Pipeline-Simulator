@@ -1,5 +1,6 @@
 {
     "telemetry.enableCrashReporter": false,
     "rust-client.disableRustup": true,
-    "rust.clippy_preference": "on"
+    "rust.clippy_preference": "on",
+    "editor.formatOnSave": true,
 }
