@@ -1,11 +1,11 @@
 use std::cmp::Ordering;
 use std::option::Option;
 use std::vec::Vec;
-
+pub mod memory;
 #[derive(Copy, Clone, Debug)]
 pub struct MemoryMapping {
-    start: u32,
-    size: u32,
+    pub start: u32,
+    pub size: u32,
 }
 
 impl MemoryMapping {
@@ -106,7 +106,7 @@ impl Bus {
 
 impl BusObject for Bus {
     fn mapping(&self) -> MemoryMapping {
-        return self.pos;
+        self.pos
     }
 
     fn read_byte(&self, addr: u32) -> u8 {
