@@ -39,3 +39,53 @@ impl bus_objects::BusObject for Memory {
         unsafe { *((&mut self.mem[addr as usize] as *mut u8) as *mut u32) = val }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::super::*;
+    use super::*;
+    #[test]
+    fn memory_byte() {
+        let mut mem = Memory::new(
+            Box::new([0; 1000]),
+            bus_objects::MemoryMapping {
+                start: 0,
+                size: 1000,
+            },
+        );
+        for i in 1..255 {
+            mem.write_byte(i, i as u8);
+            assert_eq!(mem.read_byte(i), i as u8, "Read wrong byte");
+        }
+    }
+
+    #[test]
+    fn memory_hw() {
+        let mut mem = Memory::new(
+            Box::new([0; 1000]),
+            bus_objects::MemoryMapping {
+                start: 0,
+                size: 1000,
+            },
+        );
+        for i in 1..255 {
+            mem.write_hw(i as u32, i as u16);
+            assert_eq!(mem.read_hw(i), i as u16, "Read wrong halfword");
+        }
+    }
+
+    #[test]
+    fn memory_w() {
+        let mut mem = Memory::new(
+            Box::new([0; 1000]),
+            bus_objects::MemoryMapping {
+                start: 0,
+                size: 1000,
+            },
+        );
+        for i in 1..255 {
+            mem.write_w(i, i as u32);
+            assert_eq!(mem.read_w(i), i as u32, "Read wrong word");
+        }
+    }
+}
