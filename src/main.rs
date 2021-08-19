@@ -1,5 +1,6 @@
 mod bus_objects;
 use bus_objects::*;
+mod cpu;
 fn main() {
     let mem_mapping = MemoryMapping {
         start: 0,
