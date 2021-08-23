@@ -1,5 +1,7 @@
+mod instruction_info;
 pub mod instructions;
 use super::bus_objects;
+use instructions::*;
 const MIPS_REGISTER_NAMES: [&str; 32] = [
     "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
     "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "k0", "k1", "gp", "sp", "fp",
@@ -40,5 +42,10 @@ impl<'a> MipsCpu<'a> {
         if index != 0 {
             self.general_registers[(index as usize) - 1] = value;
         }
+    }
+
+    pub fn step(&mut self) {
+        let i_w = self.bus.read_w(self.pc);
+        let first_stage = OpDecodedInstruction::decode(i_w);
     }
 }
