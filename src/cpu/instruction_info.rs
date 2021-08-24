@@ -74,6 +74,58 @@ pub fn decode_opcode(op_i: OpDecodedInstruction) -> InstructionInfos {
             ITypeInstruction::decode(op_i),
             bne,
         )),
+        0b010000 | 0b010001 | 0b010010 | 0b010011 => {
+            todo!("Coprocessor Instruction or move from/to coprocessor")
+        }
+        0b000010 => {
+            InstructionInfos::new_j(InstructionInfo::new("j", JTypeInstruction::decode(op_i), j))
+        }
+        0b000011 => InstructionInfos::new_j(InstructionInfo::new(
+            "jal",
+            JTypeInstruction::decode(op_i),
+            jal,
+        )),
+        0b100000 => InstructionInfos::new_i(InstructionInfo::new(
+            "lb",
+            ITypeInstruction::decode(op_i),
+            lb,
+        )),
+        0b100100 => InstructionInfos::new_i(InstructionInfo::new(
+            "lbu",
+            ITypeInstruction::decode(op_i),
+            lbu,
+        )),
+        0b100001 => InstructionInfos::new_i(InstructionInfo::new(
+            "lh",
+            ITypeInstruction::decode(op_i),
+            lh,
+        )),
+        0b100101 => InstructionInfos::new_i(InstructionInfo::new(
+            "lhu",
+            ITypeInstruction::decode(op_i),
+            lhu,
+        )),
+        0b001111 => InstructionInfos::new_i(InstructionInfo::new(
+            "lui",
+            ITypeInstruction::decode(op_i),
+            lui,
+        )),
+        0b100011 => InstructionInfos::new_i(InstructionInfo::new(
+            "lw",
+            ITypeInstruction::decode(op_i),
+            lw,
+        )),
+        0b110000 | 0b110001 | 0b110010 | 0b110011 => todo!("Load word to coprocessor"),
+        0b100010 => InstructionInfos::new_i(InstructionInfo::new(
+            "lwl",
+            ITypeInstruction::decode(op_i),
+            lwl,
+        )),
+        0b100110 => InstructionInfos::new_i(InstructionInfo::new(
+            "lwr",
+            ITypeInstruction::decode(op_i),
+            lwr,
+        )),
         _ => panic!("unknown instruction"),
     }
 }
@@ -84,6 +136,27 @@ pub fn decode_rtype(op_i: OpDecodedInstruction) -> InstructionInfos {
         0b100000 => InstructionInfos::new_r(InstructionInfo::new("add", decoded, add)),
         0b100001 => InstructionInfos::new_r(InstructionInfo::new("addu", decoded, addu)),
         0b100100 => InstructionInfos::new_r(InstructionInfo::new("and", decoded, and)),
+        0b001101 => panic!("Break instruction"),
+        0b011010 => InstructionInfos::new_r(InstructionInfo::new("div", decoded, div)),
+        0b011011 => InstructionInfos::new_r(InstructionInfo::new("divu", decoded, divu)),
+        0b001001 => InstructionInfos::new_j(InstructionInfo::new(
+            "jral",
+            JTypeInstruction::decode(op_i),
+            jral,
+        )),
+        0b001000 => InstructionInfos::new_j(InstructionInfo::new(
+            "jr",
+            JTypeInstruction::decode(op_i),
+            jr,
+        )),
+        0b010000 => InstructionInfos::new_r(InstructionInfo::new("mfhi", decoded, mfhi)),
+        0b010010 => InstructionInfos::new_r(InstructionInfo::new("mflo", decoded, mflo)),
+        0b010001 => InstructionInfos::new_r(InstructionInfo::new("mthi", decoded, mthi)),
+        0b010011 => InstructionInfos::new_r(InstructionInfo::new("mtlo", decoded, mtlo)),
+        0b011000 => InstructionInfos::new_r(InstructionInfo::new("mult", decoded, mult)),
+        0b011001 => InstructionInfos::new_r(InstructionInfo::new("multu", decoded, multu)),
+        0b100111 => InstructionInfos::new_r(InstructionInfo::new("nor", decoded, nor)),
+        0b100101 => InstructionInfos::new_r(InstructionInfo::new("or", decoded, or)),
         _ => panic!("unknown instruction"),
     }
 }

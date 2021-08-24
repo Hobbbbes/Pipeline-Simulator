@@ -1,5 +1,7 @@
 use crate::cpu;
 use std::todo;
+
+#[derive(Clone, Copy)]
 pub struct OpDecodedInstruction {
     pub op: u8,
     other: u32,
@@ -153,5 +155,93 @@ pub fn bltzal(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
 }
 
 pub fn bne(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn div(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn divu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn j(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
+    todo!()
+}
+
+pub fn jal(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
+    todo!()
+}
+
+pub fn jral(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
+    todo!()
+}
+
+pub fn jr(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
+    todo!()
+}
+
+pub fn lb(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lbu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lh(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lhu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lui(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lw(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lwl(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn lwr(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn mfhi(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn mflo(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn mthi(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn mtlo(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn mult(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn multu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn nor(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn or(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
     todo!()
 }
