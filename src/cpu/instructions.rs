@@ -1,7 +1,7 @@
 use crate::cpu;
 use std::todo;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct OpDecodedInstruction {
     pub op: u8,
     other: u32,
@@ -20,6 +20,7 @@ pub trait FromOpDecodedInstruction {
     fn decode(i: OpDecodedInstruction) -> Self;
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct ITypeInstruction {
     pub op: u8,
     rs: u8,
@@ -41,6 +42,7 @@ impl FromOpDecodedInstruction for ITypeInstruction {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct JTypeInstruction {
     pub op: u8,
     target: u32,
@@ -55,6 +57,7 @@ impl FromOpDecodedInstruction for JTypeInstruction {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct RTypeInstruction {
     pub op: u8,
     rs: u8,
@@ -94,72 +97,91 @@ impl FromOpDecodedInstruction for RTypeInstruction {
         }
     }
 }
+#[inline]
+fn generic_branch(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction, cond: bool) {
+    let offset = (u16::from_be(i.immediate) as i16 as i32) << 2;
+    if cond {
+        cpu.branch = true;
+        cpu.branch_target = ((cpu.pc + 4) as i32 + offset) as u32;
+    }
+}
 
-//add 2 signed integers
+//add 2 integers
 //throw Integer overflow exception on overflow
 pub fn add(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    let x = cpu.get_register(i.rs);
-    let y = cpu.get_register(i.rt);
-    cpu.set_register(i.rd, ((x as i32) + (y as i32)) as u32);
+    //no exception
+    addu(cpu, i);
 }
 //add content of one register to immediate sign extended value
 //throw Integer overflow exception on overflow
 pub fn addi(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    //no exception
+    addiu(cpu, i);
+}
+//add content of one register to immediate sign extended value
+pub fn addiu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
     let x = cpu.get_register(i.rs) as i32;
-    let imm = i.immediate as i16 as i32;
+    let imm = u16::from_be(i.immediate) as i16 as i32;
     cpu.set_register(i.rt, (x + imm) as u32);
 }
-
-pub fn addiu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
-}
-
+//add 2 signed integers
 pub fn addu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let y = cpu.get_register(i.rt);
+    cpu.set_register(i.rd, ((x as i32) + (y as i32)) as u32);
 }
 
 pub fn and(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let y = cpu.get_register(i.rt);
+    cpu.set_register(i.rd, x & y);
 }
 
 pub fn andi(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let imm = u16::from_be(i.immediate) as u32;
+    cpu.set_register(i.rt, x & imm);
 }
 
 pub fn beq(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    generic_branch(cpu, i, cpu.get_register(i.rs) == cpu.get_register(i.rt))
 }
 
 pub fn bgez(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    generic_branch(cpu, i, cpu.get_register(i.rs) as i32 >= 0)
 }
 
 pub fn bgezal(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    bgez(cpu, i);
+    cpu.set_register(31, cpu.pc + 8);
 }
 
 pub fn bgtz(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    generic_branch(cpu, i, cpu.get_register(i.rs) as i32 > 0)
 }
 
 pub fn blez(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    generic_branch(cpu, i, cpu.get_register(i.rs) as i32 <= 0)
 }
 
 pub fn bltz(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    generic_branch(cpu, i, (cpu.get_register(i.rs) as i32) < 0)
 }
 
 pub fn bltzal(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    bltz(cpu, i);
+    cpu.set_register(31, cpu.pc + 8);
 }
 
 pub fn bne(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    generic_branch(cpu, i, cpu.get_register(i.rs) != cpu.get_register(i.rt))
 }
 
 pub fn div(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs) as i32;
+    let y = cpu.get_register(i.rt) as i32;
+    cpu.lo = (x / y) as u32;
+    cpu.hi = (x % y) as u32;
 }
 
 pub fn divu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {

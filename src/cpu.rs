@@ -10,14 +10,21 @@ const MIPS_REGISTER_NAMES: [&str; 32] = [
 ];
 
 pub struct MipsCpu<'a> {
+    //Always big endian
     general_registers: [u32; 31],
-    fpu_register: [u32; 2],
+    //Depending on host architecture
+    hi: u32,
+    //Depending on host architecture
+    lo: u32,
+    //fpu_register: [u32; 2],
 
+    //Depending on host architecture
     pc: u32,
     instruction_buffer_register: u32,
     bus: &'a dyn bus_objects::BusObject,
 
     branch: bool,
+    //Depending on host architecture
     branch_target: u32,
 }
 
@@ -25,7 +32,8 @@ impl<'a> MipsCpu<'a> {
     pub fn new(bus: &'a dyn bus_objects::BusObject, pc: u32) -> Self {
         MipsCpu {
             general_registers: [0; 31],
-            fpu_register: [0.0 as u32; 2],
+            hi: 0,
+            lo: 0,
             pc,
             instruction_buffer_register: 0,
             bus,
@@ -36,12 +44,12 @@ impl<'a> MipsCpu<'a> {
     fn get_register(&self, index: u8) -> u32 {
         match index {
             0 => 0,
-            r => self.general_registers[(r as usize) - 1],
+            r => u32::from_be(self.general_registers[(r as usize) - 1]),
         }
     }
     fn set_register(&mut self, index: u8, value: u32) {
         if index != 0 {
-            self.general_registers[(index as usize) - 1] = value;
+            self.general_registers[(index as usize) - 1] = u32::to_be(value);
         }
     }
 
@@ -49,10 +57,18 @@ impl<'a> MipsCpu<'a> {
         let i_w = self.bus.read_w(self.pc);
         let first_stage = OpDecodedInstruction::decode(i_w);
         let second_stage = decode_opcode(first_stage);
+        let branch = self.branch;
         match second_stage {
             InstructionInfos::RType(i) => self.execute(i),
             InstructionInfos::IType(i) => self.execute(i),
             InstructionInfos::JType(i) => self.execute(i),
+        }
+        match branch {
+            true => {
+                self.pc = self.branch_target;
+                self.branch = false;
+            }
+            false => self.pc += 1,
         }
     }
 
