@@ -10,6 +10,7 @@ fn main() {
     let mem = Box::new(memory::Memory::new(Box::new([0; 1000]), mem_mapping));
     let b = bus_objects::Bus::new(0, 0, vec![(mem_mapping, mem)]).unwrap();
     let mut cpu = cpu::MipsCpu::new(&b, 0);
-    cpu.add(RTypeInstruction::new());
+    add(&mut cpu, RTypeInstruction::new());
+    cpu.step();
     println!("Hello, world!");
 }

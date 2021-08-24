@@ -21,7 +21,7 @@ pub trait FromOpDecodedInstruction {
 pub struct ITypeInstruction {
     pub op: u8,
     rs: u8,
-    rt: u8,
+    pub rt: u8, //for regimm instruction function field
     immediate: u16,
 }
 
@@ -125,5 +125,33 @@ pub fn andi(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
 }
 
 pub fn beq(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn bgez(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn bgezal(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn bgtz(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn blez(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn bltz(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn bltzal(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn bne(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
     todo!()
 }
