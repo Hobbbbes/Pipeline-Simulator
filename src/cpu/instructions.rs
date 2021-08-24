@@ -174,11 +174,11 @@ pub fn jal(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
     todo!()
 }
 
-pub fn jral(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
+pub fn jalr(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
     todo!()
 }
 
-pub fn jr(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
+pub fn jr(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
     todo!()
 }
 
@@ -243,5 +243,85 @@ pub fn nor(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
 }
 
 pub fn or(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn ori(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn sb(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn sh(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn sll(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn sllv(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn slt(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn slti(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn sltiu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn sltu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn sra(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn srav(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn srl(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn srlv(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn sub(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn subu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn sw(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn swl(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn swr(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
+    todo!()
+}
+
+pub fn xor(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
+    todo!()
+}
+
+pub fn xori(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
     todo!()
 }

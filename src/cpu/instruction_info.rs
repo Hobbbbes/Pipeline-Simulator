@@ -126,6 +126,52 @@ pub fn decode_opcode(op_i: OpDecodedInstruction) -> InstructionInfos {
             ITypeInstruction::decode(op_i),
             lwr,
         )),
+        0b001101 => InstructionInfos::new_i(InstructionInfo::new(
+            "ori",
+            ITypeInstruction::decode(op_i),
+            ori,
+        )),
+        0b101000 => InstructionInfos::new_i(InstructionInfo::new(
+            "sb",
+            ITypeInstruction::decode(op_i),
+            sb,
+        )),
+        0b101001 => InstructionInfos::new_i(InstructionInfo::new(
+            "sh",
+            ITypeInstruction::decode(op_i),
+            sh,
+        )),
+        0b001010 => InstructionInfos::new_i(InstructionInfo::new(
+            "slti",
+            ITypeInstruction::decode(op_i),
+            slti,
+        )),
+        0b001011 => InstructionInfos::new_i(InstructionInfo::new(
+            "sltiu",
+            ITypeInstruction::decode(op_i),
+            sltiu,
+        )),
+        0b101011 => InstructionInfos::new_i(InstructionInfo::new(
+            "sw",
+            ITypeInstruction::decode(op_i),
+            sw,
+        )),
+        0b111000 | 0b111001 | 0b111010 | 0b111011 => todo!("Store word from Coprocessor"),
+        0b101010 => InstructionInfos::new_i(InstructionInfo::new(
+            "swl",
+            ITypeInstruction::decode(op_i),
+            swl,
+        )),
+        0b101110 => InstructionInfos::new_i(InstructionInfo::new(
+            "swr",
+            ITypeInstruction::decode(op_i),
+            swr,
+        )),
+        0b001110 => InstructionInfos::new_i(InstructionInfo::new(
+            "xori",
+            ITypeInstruction::decode(op_i),
+            xori,
+        )),
         _ => panic!("unknown instruction"),
     }
 }
@@ -139,16 +185,8 @@ pub fn decode_rtype(op_i: OpDecodedInstruction) -> InstructionInfos {
         0b001101 => panic!("Break instruction"),
         0b011010 => InstructionInfos::new_r(InstructionInfo::new("div", decoded, div)),
         0b011011 => InstructionInfos::new_r(InstructionInfo::new("divu", decoded, divu)),
-        0b001001 => InstructionInfos::new_j(InstructionInfo::new(
-            "jral",
-            JTypeInstruction::decode(op_i),
-            jral,
-        )),
-        0b001000 => InstructionInfos::new_j(InstructionInfo::new(
-            "jr",
-            JTypeInstruction::decode(op_i),
-            jr,
-        )),
+        0b001001 => InstructionInfos::new_r(InstructionInfo::new("jalr", decoded, jalr)),
+        0b001000 => InstructionInfos::new_r(InstructionInfo::new("jr", decoded, jr)),
         0b010000 => InstructionInfos::new_r(InstructionInfo::new("mfhi", decoded, mfhi)),
         0b010010 => InstructionInfos::new_r(InstructionInfo::new("mflo", decoded, mflo)),
         0b010001 => InstructionInfos::new_r(InstructionInfo::new("mthi", decoded, mthi)),
@@ -157,6 +195,18 @@ pub fn decode_rtype(op_i: OpDecodedInstruction) -> InstructionInfos {
         0b011001 => InstructionInfos::new_r(InstructionInfo::new("multu", decoded, multu)),
         0b100111 => InstructionInfos::new_r(InstructionInfo::new("nor", decoded, nor)),
         0b100101 => InstructionInfos::new_r(InstructionInfo::new("or", decoded, or)),
+        0b000000 => InstructionInfos::new_r(InstructionInfo::new("sll", decoded, sll)),
+        0b000100 => InstructionInfos::new_r(InstructionInfo::new("sllv", decoded, sllv)),
+        0b101010 => InstructionInfos::new_r(InstructionInfo::new("slt", decoded, slt)),
+        0b101011 => InstructionInfos::new_r(InstructionInfo::new("sltu", decoded, sltu)),
+        0b000011 => InstructionInfos::new_r(InstructionInfo::new("sra", decoded, sra)),
+        0b000111 => InstructionInfos::new_r(InstructionInfo::new("srav", decoded, srav)),
+        0b000010 => InstructionInfos::new_r(InstructionInfo::new("srl", decoded, srl)),
+        0b000110 => InstructionInfos::new_r(InstructionInfo::new("srlv", decoded, srlv)),
+        0b100010 => InstructionInfos::new_r(InstructionInfo::new("sub", decoded, sub)),
+        0b100011 => InstructionInfos::new_r(InstructionInfo::new("subu", decoded, subu)),
+        0b001100 => panic!("Syscall instruction"),
+        0b100110 => InstructionInfos::new_r(InstructionInfo::new("xor", decoded, xor)),
         _ => panic!("unknown instruction"),
     }
 }
