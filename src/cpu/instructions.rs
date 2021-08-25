@@ -1,6 +1,5 @@
 use crate::cpu;
 use std::todo;
-
 #[derive(Clone, Copy, Debug)]
 pub struct OpDecodedInstruction {
     pub op: u8,
@@ -185,51 +184,70 @@ pub fn div(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
 }
 
 pub fn divu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let y = cpu.get_register(i.rt);
+    cpu.lo = x / y;
+    cpu.hi = x % y;
 }
 
 pub fn j(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
-    todo!()
+    let target = (i.target << 2) | (0xF0000000 & cpu.pc);
+    cpu.branch = true;
+    cpu.branch_target = target;
 }
 
 pub fn jal(cpu: &mut cpu::MipsCpu<'_>, i: JTypeInstruction) {
-    todo!()
+    j(cpu, i);
+    cpu.set_register(31, cpu.pc + 8);
 }
 
 pub fn jalr(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    jr(cpu, i);
+    cpu.set_register(i.rd, cpu.pc + 8);
 }
 
 pub fn jr(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    cpu.branch = true;
+    cpu.branch_target = cpu.get_register(i.rs);
 }
 
 pub fn lb(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    let loaded = cpu.bus.read_byte(addr as u32) as i8 as i32;
+    cpu.set_register(i.rt, loaded as u32);
 }
 
 pub fn lbu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    let loaded = cpu.bus.read_byte(addr as u32) as u32;
+    cpu.set_register(i.rt, loaded);
 }
 
 pub fn lh(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    let loaded = u16::from_be(cpu.bus.read_hw(addr as u32)) as i16 as i32;
+    cpu.set_register(i.rt, loaded as u32);
 }
 
 pub fn lhu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    let loaded = u16::from_be(cpu.bus.read_hw(addr as u32)) as u32;
+    cpu.set_register(i.rt, loaded);
 }
 
 pub fn lui(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let to_load = (u16::from_be(i.immediate) as u32) << 16;
+    cpu.set_register(i.rt, to_load);
 }
 
 pub fn lw(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    let loaded = u32::from_be(cpu.bus.read_w(addr as u32));
+    cpu.set_register(i.rt, loaded);
 }
 
 pub fn lwl(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
 }
 
 pub fn lwr(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {

@@ -52,7 +52,6 @@ impl<'a> MipsCpu<'a> {
             self.general_registers[(index as usize) - 1] = u32::to_be(value);
         }
     }
-
     pub fn step(&mut self) {
         let i_w = self.bus.read_w(self.pc);
         let first_stage = OpDecodedInstruction::decode(i_w);
