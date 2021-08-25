@@ -3,7 +3,7 @@ pub mod instructions;
 use super::bus_objects;
 use instruction_info::*;
 use instructions::*;
-const MIPS_REGISTER_NAMES: [&str; 32] = [
+const _MIPS_REGISTER_NAMES: [&str; 32] = [
     "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
     "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "k0", "k1", "gp", "sp", "fp",
     "ra",
@@ -12,6 +12,7 @@ const MIPS_REGISTER_NAMES: [&str; 32] = [
 pub struct MipsCpu<'a> {
     //Always big endian
     general_registers: [u32; 31],
+
     //Depending on host architecture
     hi: u32,
     //Depending on host architecture
@@ -20,8 +21,7 @@ pub struct MipsCpu<'a> {
 
     //Depending on host architecture
     pc: u32,
-    instruction_buffer_register: u32,
-    bus: &'a dyn bus_objects::BusObject,
+    bus: &'a mut dyn bus_objects::BusObject,
 
     branch: bool,
     //Depending on host architecture
@@ -29,27 +29,41 @@ pub struct MipsCpu<'a> {
 }
 
 impl<'a> MipsCpu<'a> {
-    pub fn new(bus: &'a dyn bus_objects::BusObject, pc: u32) -> Self {
+    pub fn new(bus: &'a mut dyn bus_objects::BusObject, pc: u32) -> Self {
         MipsCpu {
             general_registers: [0; 31],
             hi: 0,
             lo: 0,
             pc,
-            instruction_buffer_register: 0,
             bus,
             branch: false,
             branch_target: 0,
         }
     }
+    #[inline]
     fn get_register(&self, index: u8) -> u32 {
         match index {
             0 => 0,
             r => u32::from_be(self.general_registers[(r as usize) - 1]),
         }
     }
+    #[inline]
+    fn get_register_nc(&self, index: u8) -> u32 {
+        match index {
+            0 => 0,
+            r => self.general_registers[(r as usize) - 1],
+        }
+    }
+
+    #[inline]
     fn set_register(&mut self, index: u8, value: u32) {
+        self.set_register_nc(index, u32::from_be(value));
+    }
+    //Set Register without conversion to Big Endian
+    #[inline]
+    fn set_register_nc(&mut self, index: u8, value: u32) {
         if index != 0 {
-            self.general_registers[(index as usize) - 1] = u32::to_be(value);
+            self.general_registers[(index as usize) - 1] = value;
         }
     }
     pub fn step(&mut self) {

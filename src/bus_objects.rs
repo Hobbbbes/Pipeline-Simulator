@@ -78,16 +78,16 @@ impl Bus {
         panic!("Invalid Bus Address");
     }
 
-    fn get_mut_bus_obj(&mut self, addr: u32) -> &mut Box<dyn BusObject> {
+    fn _get_mut_bus_obj(&mut self, addr: u32) -> &mut Box<dyn BusObject> {
         let index = Bus::get_bus_obj_index_vec(&self.bus_objects, addr);
         &mut self.bus_objects[index].1
     }
 
-    fn get_bus_obj(&self, addr: u32) -> &Box<dyn BusObject> {
-        &self.bus_objects[self.get_bus_obj_index(addr)].1
+    fn _get_bus_obj(&self, addr: u32) -> &dyn BusObject {
+        &*self.bus_objects[self.get_bus_obj_index(addr)].1
     }
 
-    fn get_bus_obj_mapping(&self, addr: u32) -> &MemoryMapping {
+    fn _get_bus_obj_mapping(&self, addr: u32) -> &MemoryMapping {
         &self.bus_objects[self.get_bus_obj_index(addr)].0
     }
 

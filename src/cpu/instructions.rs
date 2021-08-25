@@ -1,5 +1,4 @@
 use crate::cpu;
-use std::todo;
 #[derive(Clone, Copy, Debug)]
 pub struct OpDecodedInstruction {
     pub op: u8,
@@ -242,126 +241,222 @@ pub fn lui(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
 
 pub fn lw(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
     let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
-    let loaded = u32::from_be(cpu.bus.read_w(addr as u32));
-    cpu.set_register(i.rt, loaded);
+    let loaded = cpu.bus.read_w(addr as u32);
+    cpu.set_register_nc(i.rt, loaded);
 }
 
 pub fn lwl(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    let mut addr =
+        ((u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32) as u32;
+    let mut register = cpu.get_register_nc(i.rt);
+    let mut counter = 0;
+    while addr % 4 != 0 {
+        register &= 0xff << ((3 - counter) * 8);
+        register |= (cpu.bus.read_byte(addr) as u32) << ((3 - counter) * 8);
+        counter += 1;
+        addr += 1;
+    }
+    cpu.set_register_nc(i.rt, register);
 }
 
 pub fn lwr(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let mut addr =
+        ((u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32) as u32;
+    let mut register = cpu.get_register_nc(i.rt);
+    let mut counter = 0;
+    while addr % 4 != 0 {
+        register &= 0xff << (counter * 8);
+        register |= (cpu.bus.read_byte(addr) as u32) << (counter * 8);
+        counter += 1;
+        addr -= 1;
+    }
+    cpu.set_register_nc(i.rt, register);
 }
 
 pub fn mfhi(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    cpu.set_register(i.rd, cpu.hi);
 }
 
 pub fn mflo(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    cpu.set_register(i.rd, cpu.lo);
 }
 
 pub fn mthi(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    cpu.hi = cpu.get_register(i.rs);
 }
 
 pub fn mtlo(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    cpu.lo = cpu.get_register(i.rs);
 }
 
 pub fn mult(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs) as i32 as i64;
+    let y = cpu.get_register(i.rt) as i32 as i64;
+    let r = x * y;
+    cpu.lo = r as u32;
+    cpu.hi = (r >> 32) as u32;
 }
 
 pub fn multu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs) as u64;
+    let y = cpu.get_register(i.rt) as u64;
+    let r = x * y;
+    cpu.lo = r as u32;
+    cpu.hi = (r >> 32) as u32;
 }
 
 pub fn nor(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let y = cpu.get_register(i.rt);
+    cpu.set_register(i.rd, !(x | y));
 }
 
 pub fn or(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let y = cpu.get_register(i.rt);
+    cpu.set_register(i.rd, x | y);
 }
 
 pub fn ori(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let imm = u16::from_be(i.immediate) as u32;
+    cpu.set_register(i.rt, x | imm);
 }
 
 pub fn sb(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    cpu.bus
+        .write_byte(addr as u32, cpu.get_register(i.rt) as u8);
 }
 
 pub fn sh(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    cpu.bus
+        .write_hw(addr as u32, u16::to_be(cpu.get_register(i.rt) as u16));
 }
 
 pub fn sll(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    cpu.set_register(i.rd, x << i.shamt);
 }
 
 pub fn sllv(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    let y = cpu.get_register(i.rs);
+    cpu.set_register(i.rd, x << y);
 }
 
 pub fn slt(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt) as i32;
+    let y = cpu.get_register(i.rs) as i32;
+    if y < x {
+        cpu.set_register(i.rd, 1);
+    } else {
+        cpu.set_register(i.rd, 0);
+    }
 }
 
 pub fn slti(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let x = u16::from_be(i.immediate) as i16 as i32;
+    let y = cpu.get_register(i.rs) as i32;
+    if y < x {
+        cpu.set_register(i.rt, 1);
+    } else {
+        cpu.set_register(i.rt, 0);
+    }
 }
 
 pub fn sltiu(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let x = u16::from_be(i.immediate) as i16 as u32;
+    let y = cpu.get_register(i.rs);
+    if y < x {
+        cpu.set_register(i.rt, 1);
+    } else {
+        cpu.set_register(i.rt, 0);
+    }
 }
 
 pub fn sltu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    let y = cpu.get_register(i.rs);
+    if y < x {
+        cpu.set_register(i.rd, 1);
+    } else {
+        cpu.set_register(i.rd, 0);
+    }
 }
 
 pub fn sra(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt) as i32;
+    cpu.set_register(i.rd, (x >> i.shamt) as u32);
 }
 
 pub fn srav(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt) as i32;
+    let y = cpu.get_register(i.rs);
+    cpu.set_register(i.rd, (x >> y) as u32);
 }
 
 pub fn srl(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    cpu.set_register(i.rd, x >> i.shamt);
 }
 
 pub fn srlv(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    let y = cpu.get_register(i.rs);
+    cpu.set_register(i.rd, x >> y);
 }
 
 pub fn sub(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    let y = cpu.get_register(i.rs);
+    cpu.set_register(i.rd, x - y);
 }
 
 pub fn subu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    sub(cpu, i);
 }
 
 pub fn sw(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let addr = (u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32;
+    cpu.bus.write_w(addr as u32, cpu.get_register_nc(i.rt));
 }
 
 pub fn swl(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let mut addr =
+        ((u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32) as u32;
+    let register = cpu.get_register_nc(i.rt);
+    let mut counter = 0;
+    while addr % 4 != 0 {
+        let value = (register >> ((3 - counter) * 8)) as u8;
+        cpu.bus.write_byte(addr, value);
+        counter += 1;
+        addr += 1;
+    }
 }
 
 pub fn swr(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let mut addr =
+        ((u16::from_be(i.immediate) as i16 as i32) + cpu.get_register(i.rs) as i32) as u32;
+    let register = cpu.get_register_nc(i.rt);
+    let mut counter = 0;
+    while addr % 4 != 0 {
+        let value = (register >> (counter * 8)) as u8;
+        cpu.bus.write_byte(addr, value);
+        counter += 1;
+        addr -= 1;
+    }
 }
 
 pub fn xor(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rt);
+    let y = cpu.get_register(i.rs);
+    cpu.set_register(i.rd, x ^ y);
 }
 
 pub fn xori(cpu: &mut cpu::MipsCpu<'_>, i: ITypeInstruction) {
-    todo!()
+    let x = cpu.get_register(i.rs);
+    let imm = u16::from_be(i.immediate) as u32;
+    cpu.set_register(i.rt, x ^ imm);
 }
