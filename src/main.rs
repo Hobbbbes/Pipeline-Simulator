@@ -14,3 +14,6 @@ fn main() {
     cpu.step();
     println!("Hello, world!");
 }
+
+fn prepare_bus() -> Bus {}
+fn load_elf_into_ram() -> memory::Memory {}
