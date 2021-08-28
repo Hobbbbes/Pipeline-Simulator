@@ -26,6 +26,8 @@ pub struct ITypeInstruction {
     immediate: u16,
 }
 
+impl ITypeInstruction {}
+
 impl FromOpDecodedInstruction for ITypeInstruction {
     fn decode(i: OpDecodedInstruction) -> Self {
         let im = i.other & 0x0000FFFF;
@@ -75,6 +77,18 @@ impl RTypeInstruction {
             shamt: 0,
             funct: 0,
         }
+    }
+    #[inline]
+    pub fn rs(&self) -> u8 {
+        self.rs
+    }
+    #[inline]
+    pub fn rt(&self) -> u8 {
+        self.rt
+    }
+    #[inline]
+    pub fn rd(&self) -> u8 {
+        self.rd
     }
 }
 

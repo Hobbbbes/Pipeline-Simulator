@@ -3,7 +3,7 @@ pub mod instructions;
 use super::bus_objects;
 use instruction_info::*;
 use instructions::*;
-const _MIPS_REGISTER_NAMES: [&str; 32] = [
+const MIPS_REGISTER_NAMES: [&str; 32] = [
     "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3", "t0", "t1", "t2", "t3", "t4", "t5", "t6",
     "t7", "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "t8", "t9", "k0", "k1", "gp", "sp", "fp",
     "ra",
@@ -72,8 +72,26 @@ impl<'a> MipsCpu<'a> {
         let second_stage = decode_opcode(first_stage);
         let branch = self.branch;
         match second_stage {
-            InstructionInfos::RType(i) => self.execute(i),
-            InstructionInfos::IType(i) => self.execute(i),
+            InstructionInfos::RType(i) => {
+                println!(
+                    "{} {},{},{}",
+                    i.memonic,
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rd() as usize],
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rs() as usize],
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rt() as usize]
+                );
+                self.execute(i);
+            }
+            InstructionInfos::IType(i) => {
+                println!(
+                    "{} {},{},{}",
+                    i.memonic,
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rd() as usize],
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rs() as usize],
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rt() as usize]
+                );
+                self.execute(i);
+            }
             InstructionInfos::JType(i) => self.execute(i),
         }
         match branch {
