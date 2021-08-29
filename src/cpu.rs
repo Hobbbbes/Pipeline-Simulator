@@ -43,8 +43,8 @@ impl<'a> MipsCpu<'a> {
 
     #[inline]
     pub fn set_stack_start(&mut self, v: u32) {
-        self.general_registers[28] = v;
-        self.general_registers[27] = v;
+        self.set_register(28, v);
+        self.set_register(27, v);
     }
 
     #[inline]
@@ -74,7 +74,7 @@ impl<'a> MipsCpu<'a> {
         }
     }
     pub fn step(&mut self) {
-        let i_w = self.bus.read_w(self.pc);
+        let i_w = u32::from_be(self.bus.read_w(self.pc));
         let first_stage = OpDecodedInstruction::decode(i_w);
         let second_stage = decode_opcode(first_stage);
         let branch = self.branch;
@@ -97,7 +97,7 @@ impl<'a> MipsCpu<'a> {
                     i.memonic,
                     MIPS_REGISTER_NAMES[i.decoded_instruction.rt() as usize],
                     MIPS_REGISTER_NAMES[i.decoded_instruction.rs() as usize],
-                    u16::from_be(i.decoded_instruction.immediate())
+                    i.decoded_instruction.immediate() as i16
                 );
                 self.execute(i);
             }
@@ -116,7 +116,7 @@ impl<'a> MipsCpu<'a> {
                 self.pc = self.branch_target;
                 self.branch = false;
             }
-            false => self.pc += 1,
+            false => self.pc += 4,
         }
     }
 
