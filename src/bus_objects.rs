@@ -61,7 +61,7 @@ impl Bus {
                 return index;
             }
         }
-        panic!("Invalid Bus Address");
+        panic!("Invalid Bus Address {:#04X?}", addr);
     }
 
     fn get_bus_obj_index(&self, addr: u32) -> usize {
@@ -71,7 +71,7 @@ impl Bus {
                 return index;
             }
         }
-        panic!("Invalid Bus Address");
+        panic!("Invalid Bus Address {:#04X?}", addr);
     }
 
     fn get_mut_bus_obj(&mut self, addr: u32) -> &mut Box<dyn BusObject> {
