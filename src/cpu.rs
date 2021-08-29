@@ -40,6 +40,13 @@ impl<'a> MipsCpu<'a> {
             branch_target: 0,
         }
     }
+
+    #[inline]
+    pub fn set_stack_start(&mut self, v: u32) {
+        self.general_registers[28] = v;
+        self.general_registers[27] = v;
+    }
+
     #[inline]
     fn get_register(&self, index: u8) -> u32 {
         match index {
@@ -74,7 +81,8 @@ impl<'a> MipsCpu<'a> {
         match second_stage {
             InstructionInfos::RType(i) => {
                 println!(
-                    "{} {},{},{}",
+                    "{:#04X?}: {} {},{},{}",
+                    self.pc,
                     i.memonic,
                     MIPS_REGISTER_NAMES[i.decoded_instruction.rd() as usize],
                     MIPS_REGISTER_NAMES[i.decoded_instruction.rs() as usize],
@@ -84,15 +92,24 @@ impl<'a> MipsCpu<'a> {
             }
             InstructionInfos::IType(i) => {
                 println!(
-                    "{} {},{},{}",
+                    "{:#04X?}: {} {},{},{}",
+                    self.pc,
                     i.memonic,
-                    MIPS_REGISTER_NAMES[i.decoded_instruction.rd() as usize],
+                    MIPS_REGISTER_NAMES[i.decoded_instruction.rt() as usize],
                     MIPS_REGISTER_NAMES[i.decoded_instruction.rs() as usize],
-                    MIPS_REGISTER_NAMES[i.decoded_instruction.rt() as usize]
+                    u16::from_be(i.decoded_instruction.immediate())
                 );
                 self.execute(i);
             }
-            InstructionInfos::JType(i) => self.execute(i),
+            InstructionInfos::JType(i) => {
+                println!(
+                    "{:#04X?}: {} {}",
+                    self.pc,
+                    i.memonic,
+                    (i.decoded_instruction.target() << 2) as i32
+                );
+                self.execute(i);
+            }
         }
         match branch {
             true => {

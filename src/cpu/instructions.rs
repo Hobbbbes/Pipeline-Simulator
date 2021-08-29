@@ -26,7 +26,21 @@ pub struct ITypeInstruction {
     immediate: u16,
 }
 
-impl ITypeInstruction {}
+impl ITypeInstruction {
+    #[inline]
+    pub fn rs(&self) -> u8 {
+        self.rs
+    }
+
+    #[inline]
+    pub fn rt(&self) -> u8 {
+        self.rt
+    }
+    #[inline]
+    pub fn immediate(&self) -> u16 {
+        self.immediate
+    }
+}
 
 impl FromOpDecodedInstruction for ITypeInstruction {
     fn decode(i: OpDecodedInstruction) -> Self {
@@ -46,6 +60,13 @@ impl FromOpDecodedInstruction for ITypeInstruction {
 pub struct JTypeInstruction {
     pub op: u8,
     target: u32,
+}
+
+impl JTypeInstruction {
+    #[inline]
+    pub fn target(&self) -> u32 {
+        self.target
+    }
 }
 
 impl FromOpDecodedInstruction for JTypeInstruction {
@@ -68,16 +89,6 @@ pub struct RTypeInstruction {
 }
 
 impl RTypeInstruction {
-    pub fn new() -> Self {
-        RTypeInstruction {
-            op: 0,
-            rs: 0,
-            rt: 0,
-            rd: 0,
-            shamt: 0,
-            funct: 0,
-        }
-    }
     #[inline]
     pub fn rs(&self) -> u8 {
         self.rs

@@ -1,5 +1,5 @@
 [package]
-name = "Pipeline-Simulator"
+name = "pipeline-simulator"
 version = "0.1.0"
 edition = "2018"
 
@@ -7,3 +7,4 @@ edition = "2018"
 
 [dependencies]
 goblin = "0.4.2"
+clap = "2.33.0"

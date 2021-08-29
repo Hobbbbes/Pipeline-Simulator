@@ -7,34 +7,36 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'Pipeline-Simulator'",
+            "name": "Debug executable 'pipeline-simulator'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=Pipeline-Simulator",
-                    "--package=Pipeline-Simulator"
+                    "--bin=pipeline-simulator",
+                    "--package=pipeline-simulator"
                 ],
                 "filter": {
-                    "name": "Pipeline-Simulator",
+                    "name": "pipeline-simulator",
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": [
+                "test"
+            ],
             "cwd": "${workspaceFolder}"
         },
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'Pipeline-Simulator'",
+            "name": "Debug unit tests in executable 'pipeline-simulator'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=Pipeline-Simulator",
-                    "--package=Pipeline-Simulator"
+                    "--bin=pipeline-simulator",
+                    "--package=pipeline-simulator"
                 ],
                 "filter": {
-                    "name": "Pipeline-Simulator",
+                    "name": "pipeline-simulator",
                     "kind": "bin"
                 }
             },

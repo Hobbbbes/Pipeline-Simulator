@@ -9,7 +9,7 @@ pub struct MemoryMapping {
 }
 
 impl MemoryMapping {
-    fn cmp(&self, other: &MemoryMapping) -> Ordering {
+    fn _cmp(&self, other: &MemoryMapping) -> Ordering {
         match self.start.cmp(&other.start) {
             Ordering::Greater => Ordering::Greater,
             Ordering::Less => Ordering::Less,
@@ -37,7 +37,8 @@ pub struct Bus {
 
 impl Bus {
     pub fn new(start: u32, size: u32, mut bus_objs: Vec<Box<dyn BusObject>>) -> Option<Bus> {
-        bus_objs.sort_unstable_by(|x, y| x.mapping().cmp(&y.mapping()));
+        bus_objs.sort_by_key(|x| x.mapping().start);
+        //bus_objs.sort_unstable_by(|x, y| x.mapping().cmp(&y.mapping()));
         let mut end: u32 = 0;
         for x in &bus_objs {
             let mapping = x.mapping();
