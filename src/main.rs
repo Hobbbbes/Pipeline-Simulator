@@ -17,10 +17,10 @@ fn main() {
     cpu.set_stack_start(c.stack_overwrite());
     cpu.init_gp(entry.init_gp);
     //add(&mut cpu, RTypeInstruction::new());
-    loop {
+    while cpu.bus.read_byte(c.exit_pos()) == 0 {
         cpu.step();
     }
-    //println!("Hello, world!");
+    cpu.bus.write_byte(c.printer_pos(), 1);
 }
 
 struct ElfInfo {
@@ -37,6 +37,8 @@ fn prepare_bus(c: &CommandLineArguments) -> (ElfInfo, Bus) {
             size: c.stack_size() * 1024,
         },
     )));
+    ram.push(Box::new(printer::Printer::new(c.printer_pos())));
+    ram.push(Box::new(exit::Exit::new(c.exit_pos())));
     (entry, bus_objects::Bus::new(0, 0, ram).unwrap())
 }
 fn load_elf_into_ram(filename: &str) -> (ElfInfo, vec::Vec<Box<dyn bus_objects::BusObject>>) {

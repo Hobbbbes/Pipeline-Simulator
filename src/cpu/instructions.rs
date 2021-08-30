@@ -1,3 +1,4 @@
+use crate::bus_objects::BusObject;
 use crate::cpu;
 #[derive(Clone, Copy, Debug)]
 pub struct OpDecodedInstruction {

@@ -9,6 +9,9 @@ pub struct CommandLineArguments {
     //Stack size in Kilobytes. Default: 1024
     stack_size: u32,
 
+    exit_pos: u32,
+    printer_pos: u32,
+
     //Path to a statically linked freestanding ELF Binary with MIPS R3000 machine code
     executable: String,
 }
@@ -35,6 +38,10 @@ impl CommandLineArguments {
                     .takes_value(true)
                     .default_value("1024"),
             )
+            .arg(
+                Arg::with_name("Printer Position").long("printerpos").short("p").help("Sets the memory address of the two byte printer device").takes_value(true).default_value("0x2")
+            )
+            .arg(Arg::with_name("Exit Position").long("exitpos").short("e").help("Sets the memory address of the one byte exit device used to signal the exit of the programm to the simulator").takes_value(true).default_value("0x1"))
             .arg(Arg::with_name("EXECUTABLE").help(
                 "Path to a statically linked freestanding ELF Binary with MIPS R3000 machine code",
             ).required(true)).get_matches();
@@ -53,9 +60,27 @@ impl CommandLineArguments {
             .parse::<u32>()
             .unwrap();
 
+        let exit_pos = u32::from_str_radix(
+            matches
+                .value_of("Exit Position")
+                .unwrap()
+                .trim_start_matches("0x"),
+            16,
+        )
+        .unwrap();
+        let printer_pos = u32::from_str_radix(
+            matches
+                .value_of("Printer Position")
+                .unwrap()
+                .trim_start_matches("0x"),
+            16,
+        )
+        .unwrap();
         CommandLineArguments {
             stack_overwrite,
             stack_size,
+            exit_pos,
+            printer_pos,
             executable: String::from(exec_path),
         }
     }
@@ -73,5 +98,15 @@ impl CommandLineArguments {
     #[inline]
     pub fn stack_overwrite(&self) -> u32 {
         self.stack_overwrite
+    }
+
+    #[inline]
+    pub fn exit_pos(&self) -> u32 {
+        self.exit_pos
+    }
+
+    #[inline]
+    pub fn printer_pos(&self) -> u32 {
+        self.printer_pos
     }
 }

@@ -1,6 +1,7 @@
 mod instruction_info;
 pub mod instructions;
-use super::bus_objects;
+use crate::bus_objects;
+use crate::bus_objects::BusObject;
 use instruction_info::*;
 use instructions::*;
 const MIPS_REGISTER_NAMES: [&str; 32] = [
@@ -21,7 +22,7 @@ pub struct MipsCpu<'a> {
 
     //Depending on host architecture
     pc: u32,
-    bus: &'a mut dyn bus_objects::BusObject,
+    pub bus: &'a mut bus_objects::Bus,
 
     branch: bool,
     //Depending on host architecture
@@ -29,7 +30,7 @@ pub struct MipsCpu<'a> {
 }
 
 impl<'a> MipsCpu<'a> {
-    pub fn new(bus: &'a mut dyn bus_objects::BusObject, pc: u32) -> Self {
+    pub fn new(bus: &'a mut bus_objects::Bus, pc: u32) -> Self {
         MipsCpu {
             general_registers: [0; 31],
             hi: 0,
@@ -107,7 +108,7 @@ impl<'a> MipsCpu<'a> {
             }
             InstructionInfos::JType(i) => {
                 println!(
-                    "{:#04X?}: {} {}",
+                    "{:#04X?}: {} {:#04X?}",
                     self.pc,
                     i.memonic,
                     (i.decoded_instruction.target() << 2) as i32

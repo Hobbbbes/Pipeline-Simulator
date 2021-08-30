@@ -1,7 +1,9 @@
 use std::cmp::Ordering;
 use std::option::Option;
 use std::vec::Vec;
+pub mod exit;
 pub mod memory;
+pub mod printer;
 #[derive(Copy, Clone, Debug)]
 pub struct MemoryMapping {
     pub start: u32,
