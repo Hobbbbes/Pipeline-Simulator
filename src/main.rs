@@ -20,7 +20,7 @@ fn main() {
     while cpu.bus.read_byte(c.exit_pos()) == 0 {
         cpu.step();
     }
-    cpu.bus.write_byte(c.printer_pos(), 1);
+    cpu.bus.write_byte(c.printer_pos() + 1, 0);
 }
 
 struct ElfInfo {

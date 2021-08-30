@@ -59,7 +59,7 @@ impl Bus {
     fn get_bus_obj_index_vec(b_obj: &[Box<dyn BusObject>], addr: u32) -> usize {
         for (index, x) in b_obj.iter().enumerate() {
             let mapping = x.mapping();
-            if (mapping.start <= addr) && (mapping.start + mapping.size >= addr) {
+            if (mapping.start <= addr) && (mapping.start + mapping.size > addr) {
                 return index;
             }
         }
