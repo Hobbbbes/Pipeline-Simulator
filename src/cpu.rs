@@ -80,7 +80,7 @@ impl<'a> MipsCpu<'a> {
     }
 
     #[inline]
-    fn generic_step(&mut self) -> instruction_info::InstructionInfos {
+    fn generic_step(&self) -> instruction_info::InstructionInfos {
         let i_w = u32::from_be(self.bus.read_w(self.pc));
         let first_stage = OpDecodedInstruction::decode(i_w);
         decode_opcode(first_stage)

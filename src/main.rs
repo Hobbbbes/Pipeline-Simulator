@@ -17,16 +17,29 @@ fn main() {
     let mut cpu = cpu::MipsCpu::new(&mut b, entry.entry_point);
     cpu.set_stack_start(c.stack_overwrite());
     cpu.init_gp(entry.init_gp);
+
+    let exit_device = cpu.bus.get_bus_obj_index(c.exit_pos());
+
     let mut instruction_counter: u32 = 0;
     let start_time = Instant::now();
     //add(&mut cpu, RTypeInstruction::new());
     if c.disassemble() {
-        while cpu.bus.read_byte(c.exit_pos()) == 0 {
+        while cpu
+            .bus
+            .get_bus_obj_by_index(exit_device)
+            .read_byte(c.exit_pos())
+            == 0
+        {
             instruction_counter += 1;
             cpu.step_disassemble();
         }
     } else {
-        while cpu.bus.read_byte(c.exit_pos()) == 0 {
+        while cpu
+            .bus
+            .get_bus_obj_by_index(exit_device)
+            .read_byte(c.exit_pos())
+            == 0
+        {
             instruction_counter += 1;
             cpu.step();
         }

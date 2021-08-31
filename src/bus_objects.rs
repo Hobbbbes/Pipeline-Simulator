@@ -66,7 +66,7 @@ impl Bus {
         panic!("Invalid Bus Address {:#04X?}", addr);
     }
 
-    fn get_bus_obj_index(&self, addr: u32) -> usize {
+    pub fn get_bus_obj_index(&self, addr: u32) -> usize {
         for (index, x) in self.bus_objects.iter().enumerate() {
             let mapping = x.mapping();
             if (mapping.start <= addr) && (mapping.start + mapping.size >= addr) {
@@ -83,6 +83,11 @@ impl Bus {
 
     fn get_bus_obj(&self, addr: u32) -> &dyn BusObject {
         &*self.bus_objects[self.get_bus_obj_index(addr)]
+    }
+
+    #[inline]
+    pub fn get_bus_obj_by_index(&self, index: usize) -> &dyn BusObject {
+        &*self.bus_objects[index]
     }
 }
 
