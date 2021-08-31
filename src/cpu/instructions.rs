@@ -435,7 +435,7 @@ pub fn srlv(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
 pub fn sub(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {
     let x = cpu.get_register(i.rt);
     let y = cpu.get_register(i.rs);
-    cpu.set_register(i.rd, x - y);
+    cpu.set_register(i.rd, y - x);
 }
 
 pub fn subu(cpu: &mut cpu::MipsCpu<'_>, i: RTypeInstruction) {

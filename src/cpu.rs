@@ -78,12 +78,17 @@ impl<'a> MipsCpu<'a> {
             self.general_registers[(index as usize) - 1] = value;
         }
     }
-    pub fn step(&mut self) {
+
+    #[inline]
+    fn generic_step(&mut self) -> instruction_info::InstructionInfos {
         let i_w = u32::from_be(self.bus.read_w(self.pc));
         let first_stage = OpDecodedInstruction::decode(i_w);
-        let second_stage = decode_opcode(first_stage);
+        decode_opcode(first_stage)
+    }
+    #[inline]
+    pub fn step_disassemble(&mut self) {
         let branch = self.branch;
-        match second_stage {
+        match self.generic_step() {
             InstructionInfos::RType(i) => {
                 println!(
                     "{:#04X?}: {} {},{},{}",
@@ -115,6 +120,23 @@ impl<'a> MipsCpu<'a> {
                 );
                 self.execute(i);
             }
+        }
+        match branch {
+            true => {
+                self.pc = self.branch_target;
+                self.branch = false;
+            }
+            false => self.pc += 4,
+        }
+    }
+
+    #[inline]
+    pub fn step(&mut self) {
+        let branch = self.branch;
+        match self.generic_step() {
+            InstructionInfos::RType(i) => self.execute(i),
+            InstructionInfos::IType(i) => self.execute(i),
+            InstructionInfos::JType(i) => self.execute(i),
         }
         match branch {
             true => {

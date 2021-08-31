@@ -4,23 +4,43 @@ mod cpu;
 
 mod commandline_arguments;
 use commandline_arguments::CommandLineArguments;
+use std::time::Instant;
 use std::vec;
 extern crate goblin;
 use goblin::elf32;
 fn main() {
     let c = CommandLineArguments::new();
-    println!("{:?}", c);
+    //println!("{:?}", c);
     //let mem = Box::new(memory::Memory::new(Box::new([0; 1000]), mem_mapping));
     //let mut b = bus_objects::Bus::new(0, 0, vec![mem]).unwrap();
     let (entry, mut b) = prepare_bus(&c);
     let mut cpu = cpu::MipsCpu::new(&mut b, entry.entry_point);
     cpu.set_stack_start(c.stack_overwrite());
     cpu.init_gp(entry.init_gp);
+    let mut instruction_counter: u32 = 0;
+    let start_time = Instant::now();
     //add(&mut cpu, RTypeInstruction::new());
-    while cpu.bus.read_byte(c.exit_pos()) == 0 {
-        cpu.step();
+    if c.disassemble() {
+        while cpu.bus.read_byte(c.exit_pos()) == 0 {
+            instruction_counter += 1;
+            cpu.step_disassemble();
+        }
+    } else {
+        while cpu.bus.read_byte(c.exit_pos()) == 0 {
+            instruction_counter += 1;
+            cpu.step();
+        }
     }
+    let elapsed = start_time.elapsed().as_micros();
+    println!("Program output: ----------");
     cpu.bus.write_byte(c.printer_pos() + 1, 0);
+    println!("----------");
+    println!(
+        "Executed {} instructions in {}ms => {} instructions per Millisecond",
+        instruction_counter,
+        (elapsed as f64) / 1000.0,
+        (instruction_counter as f64) / ((elapsed as f64) / 1000.0)
+    );
 }
 
 struct ElfInfo {
@@ -52,7 +72,7 @@ fn load_elf_into_ram(filename: &str) -> (ElfInfo, vec::Vec<Box<dyn bus_objects::
         Ok(binary) => {
             info.entry_point = binary.entry as u32;
             for ph in binary.program_headers {
-                println!("{:?}", ph);
+                //println!("{:?}", ph);
                 if ph.p_type == elf32::program_header::PT_LOAD {
                     let mut mem = Box::new(memory::Memory::new(
                         vec![0; ph.p_memsz as usize].into_boxed_slice(),

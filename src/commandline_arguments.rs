@@ -12,6 +12,7 @@ pub struct CommandLineArguments {
     exit_pos: u32,
     printer_pos: u32,
 
+    disassemble: bool,
     //Path to a statically linked freestanding ELF Binary with MIPS R3000 machine code
     executable: String,
 }
@@ -22,6 +23,7 @@ impl CommandLineArguments {
             .version("0.1")
             .author("Calvin Katt")
             .about("Simulates a MIPS R3000 CPU")
+            .arg(Arg::with_name("Disassemble").long("disassemble").short("d").help("Disassemble the executed instructions"))
             .arg(
                 Arg::with_name("Stack Overwrite")
                     .long("stackoverwrite")
@@ -76,11 +78,13 @@ impl CommandLineArguments {
             16,
         )
         .unwrap();
+        let disassemble = matches.is_present("Disassemble");
         CommandLineArguments {
             stack_overwrite,
             stack_size,
             exit_pos,
             printer_pos,
+            disassemble,
             executable: String::from(exec_path),
         }
     }
@@ -108,5 +112,10 @@ impl CommandLineArguments {
     #[inline]
     pub fn printer_pos(&self) -> u32 {
         self.printer_pos
+    }
+
+    #[inline]
+    pub fn disassemble(&self) -> bool {
+        self.disassemble
     }
 }
